@@ -2,11 +2,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
-df = pd.read_csv('./data/data.csv')
+df = pd.read_excel('./data/data.xlsx')
 
 def state():
-  filtro = df[df['Recuperado'].isin(['Recuperado', 'Fallecido'])]
-  conteo = filtro['Recuperado'].value_counts()
+  filtro = df[df["Ubicación"].isin(["Fallecido", "Recuperado"])]
+  conteo = filtro["Ubicación"].value_counts()
 
   for state, value in conteo.items():
     print(f"Número de {state}: {value}")
@@ -41,10 +41,10 @@ def gender():
   show(data)
 
 def stateByGender():
-  recoveredMen = df[(df['Sexo'] == 'M') & (df['Recuperado'] == 'Recuperado')].shape[0]
-  recoveredWomen = df[(df['Sexo'] == 'F') & (df['Recuperado'] == 'Recuperado')].shape[0]
-  deceasedMen = df[(df['Sexo'] == 'M') & (df['Recuperado'] == 'Fallecido')].shape[0]
-  deceasedWomen = df[(df['Sexo'] == 'F') & (df['Recuperado'] == 'Fallecido')].shape[0]
+  recoveredMen = df[(df['Sexo'] == 'M') & (df['Ubicación'] == 'Recuperado')].shape[0]
+  recoveredWomen = df[(df['Sexo'] == 'F') & (df['Ubicación'] == 'Recuperado')].shape[0]
+  deceasedMen = df[(df['Sexo'] == 'M') & (df['Ubicación'] == 'Fallecido')].shape[0]
+  deceasedWomen = df[(df['Sexo'] == 'F') & (df['Ubicación'] == 'Fallecido')].shape[0]
 
   states = ['Mujeres Recuperadas', 'Mujeres Fallecidas', 'Hombres Recuperados', 'Hombres Fallecidos']
   amount = [recoveredWomen, deceasedWomen, recoveredMen, deceasedMen]
@@ -65,8 +65,7 @@ def stateByGender():
 
 
 def circular():
-  filtro = df[df["Tipo de contagio"].isin(["Comunitaria", "Relacionado"])]
-  conteo = filtro["Tipo de contagio"].value_counts()
+  conteo = df["Tipo"].value_counts()
 
   for state, value in conteo.items():
     print(f"Número de {state}: {value}")
@@ -81,6 +80,24 @@ def circular():
   # Mostrar el gráfico
   plt.show()
 
+def byDepartment():
+  filtro = df[df["Ubicación"].isin(["Fallecido", "Recuperado"])]
+  conteo = filtro.groupby('Departamento').size().sort_values()
+
+  for state, value in conteo.items():
+    print(f"Número de {state}: {value}")
+  print("Total:", conteo.sum())
+
+  data = {
+    "hue": conteo.index,
+    "y": conteo.values,
+    "xlabel": 'Departamentos',
+    "ylabel": 'Número',
+    "title": 'Número de personas por Departamento'
+  }
+
+  show(data)
+
 def show(data):
   sns.set_theme(style="whitegrid")
 
@@ -91,3 +108,7 @@ def show(data):
   plt.title(data["title"])
 
   plt.show()
+
+
+
+  
